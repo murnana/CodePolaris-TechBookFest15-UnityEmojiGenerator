@@ -1,0 +1,30 @@
+.header {
+    border-width: 0;
+    padding: 0;
+    margin: 10px;
+    align-content: flex-start;
+    align-items: flex-start;
+    align-self: flex-start;
+}
+
+.header > Label {
+    font-size: 22px;
+    -unity-font-style: bold;
+}
+
+.contents {
+    align-content: stretch;
+}
+
+.contents > .left-contents {
+    min-width: 245px;
+}
+
+.footer {
+    border-width: 0;
+    padding: 0;
+    margin: 5px;
+    align-content: flex-end;
+    align-items: flex-end;
+    align-self: flex-end;
+}

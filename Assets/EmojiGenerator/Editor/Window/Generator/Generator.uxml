@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/EmojiGenerator/Editor/Window/Generator/Generator.uss?fileID=7433441132597879392&amp;guid=9cdf90906b117d640acb1ee20dba454f&amp;type=3#Generator" />
+    <ui:VisualElement class="header">
+        <ui:Label text="Emoji Generator" enable-rich-text="false" />
+    </ui:VisualElement>
+    <ui:TwoPaneSplitView fixed-pane-initial-dimension="245" class="contents">
+        <ui:VisualElement class="left-contents">
+            <uie:InspectorElement name="m_RenderTextureInspector" />
+            <ui:Button name="m_PreviewButton" text="Preview" enable-rich-text="false" />
+        </ui:VisualElement>
+        <ui:Image name="m_PreviewImage" picking-mode="Ignore" />
+    </ui:TwoPaneSplitView>
+    <ui:VisualElement class="footer">
+        <ui:Button name="m_CreateButton" text="Create" enable-rich-text="false" />
+    </ui:VisualElement>
+</ui:UXML>
