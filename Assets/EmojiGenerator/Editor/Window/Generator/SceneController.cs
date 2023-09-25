@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace EmojiGenerator.Editor.Window
 {
@@ -77,7 +78,7 @@ namespace EmojiGenerator.Editor.Window
             );
 
             // 撮影用カメラを取得します
-            m_Camera = Camera.main!;
+            m_Camera = Object.FindObjectOfType<Camera>();
             Assert.IsNotNull (value: m_Camera, message: "m_Camera != null");
         }
 

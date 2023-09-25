@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace EmojiGenerator.Editor.Window
 {
@@ -143,6 +144,7 @@ namespace EmojiGenerator.Editor.Window
             camera.Render();
 
             // ファイルに保存します
+            // RenderTexture -> Texture2D へ変換します
             var oldActive = RenderTexture.active;
             RenderTexture.active = renderTexture;
             var texture2D = new Texture2D (
@@ -164,7 +166,14 @@ namespace EmojiGenerator.Editor.Window
             );
             texture2D.Apply();
             RenderTexture.active = oldActive;
+
+            // 変換した Texture2D を PNG (byte配列) へ変換します
             var pngByte = texture2D.EncodeToPNG();
+
+            // Texture2Dがこの時点で用なしになるので、破棄します
+            DestroyImmediate (obj: texture2D, allowDestroyingAssets: true);
+
+            // ファイルに保存します
             File.WriteAllBytes (
                 path: saveToPath,
                 bytes: pngByte
