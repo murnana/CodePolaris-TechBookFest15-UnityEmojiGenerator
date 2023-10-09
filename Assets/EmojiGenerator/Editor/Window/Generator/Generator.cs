@@ -184,6 +184,20 @@ namespace EmojiGenerator.Editor.Window
         }
 
         /// <summary>
+        /// Unity Editorアプリケーション終了時に呼ばれます
+        /// </summary>
+        private bool OnWantsToQuit()
+        {
+            EditorApplication.wantsToQuit -= OnWantsToQuit;
+
+            // ウィンドウを閉じます
+            Close();
+
+            return true;
+        }
+
+
+        /// <summary>
         /// ウィンドウが読み込まれたときに呼ばれます
         /// </summary>
         /// <seealso href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/ScriptableObject.OnEnable.html" />
@@ -196,6 +210,8 @@ namespace EmojiGenerator.Editor.Window
             m_Scene = new SceneController (
                 onSceneUnloaded: OnSceneUnloaded
             );
+
+            EditorApplication.wantsToQuit += OnWantsToQuit;
         }
 
         /// <summary>
@@ -204,6 +220,8 @@ namespace EmojiGenerator.Editor.Window
         /// <seealso href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/EditorWindow.OnDestroy.html" />
         private void OnDestroy()
         {
+            EditorApplication.wantsToQuit -= OnWantsToQuit;
+
             if (m_PreviewButton != null)
             {
                 // コールバックの解除
