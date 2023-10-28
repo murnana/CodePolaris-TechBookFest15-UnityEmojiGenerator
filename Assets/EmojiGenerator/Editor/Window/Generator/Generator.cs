@@ -1,3 +1,11 @@
+// Copyright 2023 murnana.
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #nullable enable
 using System;
 using System.IO;
@@ -7,6 +15,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace EmojiGenerator.Editor.Window
 {
@@ -143,6 +152,7 @@ namespace EmojiGenerator.Editor.Window
             camera.Render();
 
             // ファイルに保存します
+            // RenderTexture -> Texture2D へ変換します
             var oldActive = RenderTexture.active;
             RenderTexture.active = renderTexture;
             var texture2D = new Texture2D (
@@ -164,7 +174,14 @@ namespace EmojiGenerator.Editor.Window
             );
             texture2D.Apply();
             RenderTexture.active = oldActive;
+
+            // 変換した Texture2D を PNG (byte配列) へ変換します
             var pngByte = texture2D.EncodeToPNG();
+
+            // Texture2Dがこの時点で用なしになるので、破棄します
+            DestroyImmediate (obj: texture2D, allowDestroyingAssets: true);
+
+            // ファイルに保存します
             File.WriteAllBytes (
                 path: saveToPath,
                 bytes: pngByte
@@ -173,6 +190,20 @@ namespace EmojiGenerator.Editor.Window
             // 保存先を開きます
             Application.OpenURL (url: saveToPath);
         }
+
+        /// <summary>
+        /// Unity Editorアプリケーション終了時に呼ばれます
+        /// </summary>
+        private bool OnWantsToQuit()
+        {
+            EditorApplication.wantsToQuit -= OnWantsToQuit;
+
+            // ウィンドウを閉じます
+            Close();
+
+            return true;
+        }
+
 
         /// <summary>
         /// ウィンドウが読み込まれたときに呼ばれます
@@ -187,6 +218,8 @@ namespace EmojiGenerator.Editor.Window
             m_Scene = new SceneController (
                 onSceneUnloaded: OnSceneUnloaded
             );
+
+            EditorApplication.wantsToQuit += OnWantsToQuit;
         }
 
         /// <summary>
@@ -195,6 +228,8 @@ namespace EmojiGenerator.Editor.Window
         /// <seealso href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/EditorWindow.OnDestroy.html" />
         private void OnDestroy()
         {
+            EditorApplication.wantsToQuit -= OnWantsToQuit;
+
             if (m_PreviewButton != null)
             {
                 // コールバックの解除
